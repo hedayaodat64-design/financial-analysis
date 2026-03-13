@@ -3,236 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام التحليل المالي الاستراتيجي</title>
+    <title>نظام التحليل المالي المتكامل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
-            --primary-blue: #2d3291;
-            --secondary-blue: #1a1e5a;
-            --accent-green: #00d27a;
-            --bg-light: #f4f7fe;
-            --text-gray: #666;
-            --danger-red: #ff4d4d;
+            --main-blue: #2d3291;
+            --light-blue: #f0f2f9;
+            --accent-green: #27ae60;
+            --white: #ffffff;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-light); margin: 0; padding: 0; display: flex; justify-content: center; }
-        .mobile-container { width: 100%; max-width: 400px; background: #fff; min-height: 100vh; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1); overflow-y: auto; overflow-x: hidden; }
-        
-        /* Pages */
-        .page { display: none; padding: 15px; }
-        .active { display: block; }
-        
-        /* Header */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 50; }
-        .menu-btn { cursor: pointer; font-size: 24px; color: var(--primary-blue); }
+        body { font-family: 'Tajawal', sans-serif; background-color: #f8f9fd; margin: 0; padding: 0; }
+        .app-container { width: 100%; max-width: 480px; margin: 0 auto; background: var(--white); min-height: 100vh; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
 
-        /* Cards and Sections */
-        .card { background: #fff; border-radius: 25px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #f0f0f0; }
-        .welcome-card { background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue)); color: white; text-align: center; padding: 30px 20px; border-radius: 30px; }
-        
-        /* Inputs */
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 13px; color: var(--text-gray); margin-bottom: 5px; }
-        .input-field { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; box-sizing: border-box; font-size: 16px; font-weight: bold; color: var(--primary-blue); }
-        
-        /* UI Elements */
-        .btn-green { background: var(--accent-green); color: white; border: none; padding: 15px; border-radius: 15px; width: 100%; font-size: 16px; cursor: pointer; margin-top: 10px; }
-        .summary-box { background: var(--secondary-blue); color: white; padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        .ratio-card { border-left: 5px solid var(--accent-green); padding: 15px; margin-bottom: 15px; }
-        .ratio-val { font-size: 24px; font-weight: bold; color: var(--primary-blue); margin: 5px 0; }
-        .interpretation { font-size: 12px; color: var(--primary-blue); background: #eef1ff; padding: 8px; border-radius: 8px; border-right: 3px solid var(--primary-blue); }
+        /* Login */
+        #login-page { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: var(--main-blue); color: white; text-align: center; }
+        .pin-input { width: 70%; padding: 15px; border-radius: 12px; border: none; text-align: center; font-size: 22px; margin: 20px 0; letter-spacing: 5px; }
 
-        /* Navigation Menu Overlay */
-        #menu-overlay { display: none; position: fixed; top: 0; width: 100%; max-width: 400px; height: 100%; background: rgba(26, 30, 90, 0.98); z-index: 1000; color: white; flex-direction: column; align-items: center; justify-content: center; }
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .menu-item { background: rgba(255,255,255,0.1); padding: 25px; border-radius: 20px; text-align: center; cursor: pointer; width: 100px; }
+        /* Layout */
+        header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
+        .content-page { display: none; padding: 20px; animation: fadeIn 0.4s; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+
+        /* Cards & Inputs */
+        .card { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 20px; margin-bottom: 15px; }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-size: 12px; color: #777; margin-bottom: 5px; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #f0f0f0; background: #fafafa; font-weight: bold; box-sizing: border-box; }
+
+        /* Ratios Styles */
+        .ratio-item { background: var(--light-blue); padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .ratio-label { font-weight: 500; font-size: 14px; color: #444; }
+        .ratio-value { font-weight: 700; color: var(--main-blue); font-size: 18px; }
+
+        .btn { width: 100%; padding: 15px; border-radius: 50px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn-blue { background: var(--main-blue); color: white; }
+        .btn-pdf { background: var(--accent-green); color: white; margin-top: 20px; }
+
+        /* Side Menu */
+        #side-menu { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 80%; }
+        .menu-box { background: var(--light-blue); padding: 20px; border-radius: 20px; text-align: center; cursor: pointer; }
 
         .hidden { display: none !important; }
-        .text-red { color: var(--danger-red); }
     </style>
 </head>
 <body>
 
-<div class="mobile-container">
+<div class="app-container">
     
-    <div id="login-page" class="page active" style="background: var(--primary-blue); color: white; height: 100vh; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <div style="font-size: 60px;">🛡️</div>
-        <h2>نظام السيادة المالي</h2>
-        <p>ادخل الرمز (2003)</p>
-        <input type="password" id="pinInput" class="input-field" style="width: 60%; text-align: center; letter-spacing: 5px;" placeholder="••••">
-        <button onclick="checkPin()" class="btn-green" style="width: 60%; margin-top: 20px;">فتح النظام 🔓</button>
+    <div id="login-page">
+        <h2>نظام التحليل المالي</h2>
+        <input type="password" id="pinCode" class="pin-input" placeholder="****" maxlength="4">
+        <button class="btn btn-blue" style="width: 50%" onclick="login()">دخول</button>
     </div>
 
-    <div id="main-content" class="hidden">
+    <div id="app-content" class="hidden">
         <header>
-            <div class="menu-btn" onclick="toggleMenu()">☰</div>
-            <div style="text-align: center;">
-                <b style="color: var(--primary-blue);">التحليل المالي الاستراتيجي</b>
-            </div>
-            <div style="font-size: 20px;">👤</div>
+            <div onclick="toggleMenu()">☰</div>
+            <div id="page-title" style="font-weight: bold;">إدخال البيانات</div>
+            <div>👤</div>
         </header>
 
-        <div id="welcome-page" class="page active">
-            <div class="welcome-card">
-                <h1>مرحباً بك <br><span style="color: var(--accent-green);">أصحاب المنشآت</span></h1>
-                <p>حول أرقامك إلى رؤى استراتيجية فورية.</p>
-                <button class="btn-green" onclick="showPage('entry-page')">ابدأ إدخال البيانات 〉</button>
+        <div id="entry-page" class="content-page active-page">
+            <div class="card">
+                <h4 style="color:var(--main-blue)">قائمة الدخل</h4>
+                <div class="input-group"><label>المبيعات</label><input type="number" id="v_sales" oninput="calc()"></div>
+                <div class="input-group"><label>تكلفة المبيعات</label><input type="number" id="v_cogs" oninput="calc()"></div>
+                <div class="input-group"><label>صافي الربح</label><input type="number" id="v_netp" oninput="calc()"></div>
             </div>
+            <div class="card">
+                <h4 style="color:var(--main-blue)">الميزانية</h4>
+                <div class="input-group"><label>الأصول المتداولة</label><input type="number" id="v_ca" oninput="calc()"></div>
+                <div class="input-group"><label>المخزون</label><input type="number" id="v_inv" oninput="calc()"></div>
+                <div class="input-group"><label>ذمم مدينين</label><input type="number" id="v_rec" oninput="calc()"></div>
+                <div class="input-group"><label>الالتزامات المتداولة</label><input type="number" id="v_cl" oninput="calc()"></div>
+                <div class="input-group"><label>إجمالي الأصول</label><input type="number" id="v_ta" oninput="calc()"></div>
+            </div>
+            <button class="btn btn-blue" onclick="goTo('ratios-page')">تحليل النسب 〉</button>
         </div>
 
-        <div id="entry-page" class="page">
-            <h3 style="color: var(--primary-blue);">إدخال البيانات المالية</h3>
-            
-            <div class="card">
-                <h4 style="border-bottom: 2px solid var(--accent-green); padding-bottom: 5px;">قائمة الدخل (P&L)</h4>
-                <div class="input-group"><label>إجمالي المبيعات</label><input type="number" id="in_sales" class="input-field" value="0" oninput="calculateAll()"></div>
-                <div class="input-group"><label>تكلفة البضاعة (-)</label><input type="number" id="in_cogs" class="input-field" value="0" oninput="calculateAll()"></div>
-                <div class="input-group"><label>المصاريف التشغيلية (-)</label><input type="number" id="in_opex" class="input-field" value="0" oninput="calculateAll()"></div>
-            </div>
+        <div id="ratios-page" class="content-page">
+            <div id="report-area">
+                <h3 style="text-align: center; color: var(--main-blue);">تقرير التحليل المالي الاستراتيجي</h3>
+                <p style="text-align: center; font-size: 12px; color: #666;">تاريخ التقرير: <span id="report-date"></span></p>
+                
+                <div class="card">
+                    <h4 style="border-bottom: 2px solid var(--light-blue); padding-bottom: 5px;">📊 نسب النشاط (Activity)</h4>
+                    <div class="ratio-item">
+                        <span class="ratio-label">دوران المخزون</span>
+                        <span class="ratio-value" id="r_inv_turn">0.0</span>
+                    </div>
+                    <div class="ratio-item">
+                        <span class="ratio-label">دوران الذمم المدينة</span>
+                        <span class="ratio-value" id="r_rec_turn">0.0</span>
+                    </div>
+                </div>
 
-            <div class="card">
-                <h4 style="border-bottom: 2px solid var(--accent-green); padding-bottom: 5px;">الميزانية (Balance Sheet)</h4>
-                <div class="input-group"><label>نقد وما شابهه</label><input type="number" id="in_cash" class="input-field" value="0" oninput="calculateAll()"></div>
-                <div class="input-group"><label>ذمم مدينين</label><input type="number" id="in_receivables" class="input-field" value="0" oninput="calculateAll()"></div>
-                <div class="input-group"><label>المخزون السلعي</label><input type="number" id="in_inventory" class="input-field" value="0" oninput="calculateAll()"></div>
-                <div class="input-group"><label>أصول ثابتة</label><input type="number" id="in_fixed" class="input-field" value="0" oninput="calculateAll()"></div>
-                <div class="input-group"><label>التزامات متداولة</label><input type="number" id="in_curr_liab" class="input-field" value="0" oninput="calculateAll()"></div>
-                <div class="input-group"><label>التزامات طويلة الأجل</label><input type="number" id="in_long_liab" class="input-field" value="0" oninput="calculateAll()"></div>
-                <div class="input-group"><label>رأس المال</label><input type="number" id="in_capital" class="input-field" value="0" oninput="calculateAll()"></div>
-            </div>
-            <button class="btn-green" onclick="showPage('report-page')">عرض القوائم المالية 📄</button>
-        </div>
+                <div class="card">
+                    <h4 style="border-bottom: 2px solid var(--light-blue); padding-bottom: 5px;">💧 نسب السيولة (Liquidity)</h4>
+                    <div class="ratio-item">
+                        <span class="ratio-label">نسبة التداول</span>
+                        <span class="ratio-value" id="r_current">0.0</span>
+                    </div>
+                    <div class="ratio-item">
+                        <span class="ratio-label">نسبة السيولة السريعة</span>
+                        <span class="ratio-value" id="r_quick">0.0</span>
+                    </div>
+                </div>
 
-        <div id="report-page" class="page">
-            <h2 style="color: var(--primary-blue);">المركز المالي والأداء</h2>
-            
-            <div class="card">
-                <h4>💵 قائمة الدخل</h4>
-                <div style="display:flex; justify-content:space-between;"><span>المبيعات</span><span id="out_sales">0</span></div>
-                <div style="display:flex; justify-content:space-between;" class="text-red"><span>تكلفة البضاعة</span><span id="out_cogs">0</span></div>
-                <hr>
-                <div style="display:flex; justify-content:space-between; color: brown; font-weight:bold;"><span>إجمالي الربح</span><span id="out_gross_profit">0</span></div>
-                <div class="summary-box">
-                    <span>صافي الربح النهائي</span>
-                    <span id="out_net_profit" style="font-size:24px;">0</span>
+                <div class="card">
+                    <h4 style="border-bottom: 2px solid var(--light-blue); padding-bottom: 5px;">💰 نسب الربحية (Profitability)</h4>
+                    <div class="ratio-item">
+                        <span class="ratio-label">هامش صافي الربح</span>
+                        <span class="ratio-value" id="r_margin">0%</span>
+                    </div>
+                    <div class="ratio-item">
+                        <span class="ratio-label">العائد على الأصول (ROA)</span>
+                        <span class="ratio-value" id="r_roa">0%</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="card">
-                <h4>📂 الميزانية العمومية</h4>
-                <div style="display:flex; justify-content:space-between;"><span>إجمالي الأصول</span><b id="out_total_assets">0</b></div>
-                <div style="display:flex; justify-content:space-between;"><span>إجمالي الالتزامات</span><b id="out_total_liab">0</b></div>
-                <div style="background:#e8fbf3; padding:15px; border-radius:15px; margin-top:10px; display:flex; justify-content:space-between; color:var(--accent-green);">
-                    <b>حقوق الملكية</b>
-                    <b id="out_equity">0</b>
-                </div>
-            </div>
-            <button class="btn-green" onclick="showPage('ratios-page')">عرض النسب المالية 📊</button>
+            <button class="btn btn-pdf" onclick="downloadPDF()">تحميل التقرير PDF 📥</button>
+            <button class="btn btn-blue" style="background:#888" onclick="goTo('entry-page')">تعديل البيانات</button>
         </div>
 
-        <div id="ratios-page" class="page">
-            <h2>لوحة تحليل النسب المالية</h2>
-            
-            <div class="card ratio-card">
-                <small>نسبة التداول (Current Ratio)</small>
-                <div class="ratio-val"><span id="ratio_current">0.00</span> مرة</div>
-                <p class="interpretation">ℹ️ التفسير: <span id="inter_current">...</span></p>
-            </div>
-
-            <div class="card ratio-card" style="border-left-color: var(--primary-blue);">
-                <small>معدل دوران المخزون (Inventory Turnover)</small>
-                <div class="ratio-val"><span id="ratio_inv_turn">0.00</span> مرة</div>
-                <p class="interpretation">ℹ️ يوضح سرعة بيع وتحويل المخزون لنقد.</p>
-            </div>
-
-            <div class="card ratio-card" style="border-left-color: orange;">
-                <small>عدد مرات تحصيل الذمم (Receivables Collection)</small>
-                <div class="ratio-val"><span id="ratio_rec_turn">0.00</span> مرة</div>
-                <p class="interpretation">ℹ️ يقيس كفاءة المنشأة في تحصيل ديونها من العملاء.</p>
-            </div>
-
-            <div class="card ratio-card" style="border-left-color: purple;">
-                <small>هامش صافي الربح</small>
-                <div class="ratio-val"><span id="ratio_profit_margin">0.0</span> %</div>
-            </div>
-        </div>
-
-        <div id="menu-overlay">
-            <div style="position: absolute; top: 20px; right: 20px; font-size: 30px;" onclick="toggleMenu()">✕</div>
+        <div id="side-menu">
+            <div style="position: absolute; top: 20px; right: 20px;" onclick="toggleMenu()">✕</div>
             <div class="menu-grid">
-                <div class="menu-item" onclick="showPage('entry-page'); toggleMenu();">➕<br>إدخال</div>
-                <div class="menu-item" onclick="showPage('report-page'); toggleMenu();">📄<br>القوائم</div>
-                <div class="menu-item" onclick="showPage('ratios-page'); toggleMenu();">📊<br>النسب</div>
+                <div class="menu-box" onclick="goTo('entry-page'); toggleMenu()">📝<br>إدخال</div>
+                <div class="menu-box" onclick="goTo('ratios-page'); toggleMenu()">📊<br>النسب</div>
+                <div class="menu-box" onclick="location.reload()">🔒<br>خروج</div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function checkPin() {
-        if(document.getElementById('pinInput').value === "2003") {
+    function login() {
+        if(document.getElementById('pinCode').value === "2003") {
             document.getElementById('login-page').classList.add('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
+            document.getElementById('app-content').classList.remove('hidden');
+            document.getElementById('report-date').innerText = new Date().toLocaleDateString('ar-EG');
         } else { alert("رمز خاطئ!"); }
     }
 
     function toggleMenu() {
-        const m = document.getElementById('menu-overlay');
+        const m = document.getElementById('side-menu');
         m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
     }
 
-    function showPage(id) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        window.scrollTo(0,0);
+    function goTo(id) {
+        document.querySelectorAll('.content-page').forEach(p => p.classList.remove('active-page'));
+        document.getElementById(id).classList.add('active-page');
+        document.getElementById('page-title').innerText = id === 'entry-page' ? 'إدخال البيانات' : 'التقرير المالي';
     }
 
-    function calculateAll() {
-        // 1. الحصول على المدخلات
-        const sales = parseFloat(document.getElementById('in_sales').value) || 0;
-        const cogs = parseFloat(document.getElementById('in_cogs').value) || 0;
-        const opex = parseFloat(document.getElementById('in_opex').value) || 0;
-        const cash = parseFloat(document.getElementById('in_cash').value) || 0;
-        const rec = parseFloat(document.getElementById('in_receivables').value) || 0;
-        const inv = parseFloat(document.getElementById('in_inventory').value) || 0;
-        const fixed = parseFloat(document.getElementById('in_fixed').value) || 0;
-        const c_liab = parseFloat(document.getElementById('in_curr_liab').value) || 0;
-        const l_liab = parseFloat(document.getElementById('in_long_liab').value) || 0;
-        const capital = parseFloat(document.getElementById('in_capital').value) || 0;
+    function calc() {
+        // جلب القيم
+        const sales = parseFloat(document.getElementById('v_sales').value) || 0;
+        const cogs = parseFloat(document.getElementById('v_cogs').value) || 0;
+        const netp = parseFloat(document.getElementById('v_netp').value) || 0;
+        const ca = parseFloat(document.getElementById('v_ca').value) || 0;
+        const inv = parseFloat(document.getElementById('v_inv').value) || 0;
+        const rec = parseFloat(document.getElementById('v_rec').value) || 0;
+        const cl = parseFloat(document.getElementById('v_cl').value) || 0;
+        const ta = parseFloat(document.getElementById('v_ta').value) || 0;
 
-        // 2. حسابات القوائم
-        const gross_p = sales - cogs;
-        const net_p = gross_p - opex;
-        const total_assets = cash + rec + inv + fixed;
-        const total_liab = c_liab + l_liab;
-        const equity = total_assets - total_liab;
+        // الحسابات
+        document.getElementById('r_inv_turn').innerText = inv > 0 ? (cogs / inv).toFixed(2) : "0.0";
+        document.getElementById('r_rec_turn').innerText = rec > 0 ? (sales / rec).toFixed(2) : "0.0";
+        document.getElementById('r_current').innerText = cl > 0 ? (ca / cl).toFixed(2) : "0.0";
+        document.getElementById('r_quick').innerText = cl > 0 ? ((ca - inv) / cl).toFixed(2) : "0.0";
+        document.getElementById('r_margin').innerText = sales > 0 ? ((netp / sales) * 100).toFixed(1) + "%" : "0%";
+        document.getElementById('r_roa').innerText = ta > 0 ? ((netp / ta) * 100).toFixed(1) + "%" : "0%";
+    }
 
-        // تحديث واجهة القوائم
-        document.getElementById('out_sales').innerText = sales.toLocaleString();
-        document.getElementById('out_cogs').innerText = cogs.toLocaleString();
-        document.getElementById('out_gross_profit').innerText = gross_p.toLocaleString();
-        document.getElementById('out_net_profit').innerText = net_p.toLocaleString();
-        document.getElementById('out_total_assets').innerText = total_assets.toLocaleString();
-        document.getElementById('out_total_liab').innerText = total_liab.toLocaleString();
-        document.getElementById('out_equity').innerText = equity.toLocaleString();
-
-        // 3. حساب النسب المالية
-        // نسبة التداول
-        const curr_assets = cash + rec + inv;
-        const current_ratio = c_liab > 0 ? (curr_assets / c_liab).toFixed(2) : "0.00";
-        document.getElementById('ratio_current').innerText = current_ratio;
-        document.getElementById('inter_current').innerText = current_ratio < 1 ? "حذر: سيولة منخفضة" : "وضع جيد";
-
-        // دوران المخزون
-        const inv_turn = inv > 0 ? (cogs / inv).toFixed(2) : "0.00";
-        document.getElementById('ratio_inv_turn').innerText = inv_turn;
-
-        // دوران الذمم
-        const rec_turn = rec > 0 ? (sales / rec).toFixed(2) : "0.00";
-        document.getElementById('ratio_rec_turn').innerText = rec_turn;
-
-        // هامش الربح
-        const margin = sales > 0 ? ((net_p / sales) * 100).toFixed(1) : "0.0";
-        document.getElementById('ratio_profit_margin').innerText = margin;
+    function downloadPDF() {
+        const element = document.getElementById('report-area');
+        const opt = {
+            margin:       10,
+            filename:     'Financial_Report_2026.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
     }
 </script>
 
