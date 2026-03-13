@@ -1,180 +1,411 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام التحليل المالي الاستراتيجي</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&display=swap');
-        body { font-family: 'Tajawal', sans-serif; }
-        .text-glow { text-shadow: 0 0 10px rgba(52, 211, 153, 0.5); }
-    </style>
-</head>
-<body class="bg-slate-50">
-    <div id="root"></div>
+import , { useState, useEffect } from 'react';
+import { 
+  LayoutGrid, 
+  FileText, 
+  BarChart3, 
+  PlusCircle, 
+  ChevronRight, 
+  Wallet, 
+  TrendingUp, 
+  ShieldCheck,
+  Save,
+  Menu,
+  X,
+  ArrowUpRight,
+  ArrowDownRight,
+  Calculator,
+  Coins,
+  Info,
+  Activity,
+  Zap,
+  Percent
+} from 'lucide-react';
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+const App = () => {
+  // --- State Management ---
+  const [activeTab, setActiveTab] = useState('welcome');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [currency, setCurrency] = useState('JOD');
+  const [showSaveMessage, setShowSaveMessage] = useState(false);
 
-        // مكون بسيط للأيقونات لأن Lucide-React تحتاج إعداد خاص في الـ CDN
-        const Icon = ({ name, size = 20, className = "" }) => {
-            useEffect(() => {
-                lucide.createIcons();
-            }, [name]);
-            return <i data-lucide={name} style={{width: size, height: size}} className={className}></i>;
-        };
+  // Financial Data State
+  const [financialData, setFinancialData] = useState({
+    assets: { current: 0, fixed: 0, receivables: 0 },
+    liabilities: { current: 0, longTerm: 0 },
+    equity: { capital: 0, retainedEarnings: 0 },
+    revenue: 0,
+    cogs: 0,
+    expenses: 0,
+    inventory: 0,
+    cashFlow: { operating: 0, investing: 0, financing: 0 }
+  });
 
-        const App = () => {
-            const [activeTab, setActiveTab] = useState('welcome');
-            const [isMenuOpen, setIsMenuOpen] = useState(false);
-            const [showSaveMessage, setShowSaveMessage] = useState(false);
-            const [financialData, setFinancialData] = useState({
-                assets: { current: 0, fixed: 0, receivables: 0 },
-                liabilities: { current: 0, longTerm: 0 },
-                equity: { capital: 0, retainedEarnings: 0 },
-                revenue: 0, cogs: 0, expenses: 0, inventory: 0,
-                cashFlow: { operating: 0, investing: 0, financing: 0 }
-            });
+  // --- Calculations ---
+  const totalAssets = (financialData.assets.current || 0) + (financialData.assets.fixed || 0) + (financialData.assets.receivables || 0);
+  const totalLiabilities = (financialData.liabilities.current || 0) + (financialData.liabilities.longTerm || 0);
+  const totalEquity = (financialData.equity.capital || 0) + (financialData.equity.retainedEarnings || 0);
+  const grossProfit = (financialData.revenue || 0) - (financialData.cogs || 0);
+  const netIncome = grossProfit - (financialData.expenses || 0);
+  
+  // Advanced Ratio Calculations
+  const calculateRatios = () => {
+    const current = financialData.liabilities.current > 0 
+      ? (financialData.assets.current / financialData.liabilities.current) : 0;
+    
+    const quick = financialData.liabilities.current > 0 
+      ? ((financialData.assets.current - financialData.inventory) / financialData.liabilities.current) : 0;
+    
+    const margin = financialData.revenue > 0 
+      ? (netIncome / financialData.revenue) * 100 : 0;
+    
+    const dToE = totalEquity > 0 
+      ? (totalLiabilities / totalEquity) : 0;
 
-            // الحسابات المالية
-            const totalAssets = (financialData.assets.current || 0) + (financialData.assets.fixed || 0) + (financialData.assets.receivables || 0);
-            const totalLiabilities = (financialData.liabilities.current || 0) + (financialData.liabilities.longTerm || 0);
-            const totalEquity = (financialData.equity.capital || 0) + (financialData.equity.retainedEarnings || 0);
-            const netIncome = (financialData.revenue || 0) - (financialData.cogs || 0) - (financialData.expenses || 0);
-            const totalCashFlow = (financialData.cashFlow.operating || 0) + (financialData.cashFlow.investing || 0) + (financialData.cashFlow.financing || 0);
+    return { current, quick, margin, dToE };
+  };
 
-            const calculateRatios = () => {
-                const current = financialData.liabilities.current > 0 ? (financialData.assets.current / financialData.liabilities.current) : 0;
-                const quick = financialData.liabilities.current > 0 ? ((financialData.assets.current - financialData.inventory) / financialData.liabilities.current) : 0;
-                const margin = financialData.revenue > 0 ? (netIncome / financialData.revenue) * 100 : 0;
-                const dToE = totalEquity > 0 ? (totalLiabilities / totalEquity) : 0;
-                return { current, quick, margin, dToE };
-            };
+  const ratios = calculateRatios();
+  const totalCashFlow = (financialData.cashFlow.operating || 0) + (financialData.cashFlow.investing || 0) + (financialData.cashFlow.financing || 0);
 
-            const ratios = calculateRatios();
+  // --- Actions ---
+  const handleSave = () => {
+    setShowSaveMessage(true);
+    setTimeout(() => setShowSaveMessage(false), 3000);
+  };
 
-            const handleInputChange = (category, field, value) => {
-                const numValue = parseFloat(value) || 0;
-                if (field) {
-                    setFinancialData(prev => ({ ...prev, [category]: { ...prev[category], [field]: numValue } }));
-                } else {
-                    setFinancialData(prev => ({ ...prev, [category]: numValue }));
-                }
-            };
+  const handleInputChange = (category, field, value) => {
+    const numValue = parseFloat(value) || 0;
+    if (field) {
+      setFinancialData(prev => ({
+        ...prev,
+        [category]: { ...prev[category], [field]: numValue }
+      }));
+    } else {
+      setFinancialData(prev => ({ ...prev, [category]: numValue }));
+    }
+  };
 
-            const RatioCard = ({ title, value, unit, description, interpretation, statusColor }) => (
-                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm transition-all hover:shadow-md">
-                    <div className="flex justify-between items-start mb-4">
-                        <div className={`p-2 rounded-lg bg-${statusColor}-50 text-${statusColor}-600`}>
-                            <Icon name="activity" />
-                        </div>
-                        <span className={`text-[10px] font-bold px-2 py-1 rounded-full bg-${statusColor}-50 text-${statusColor}-600 uppercase`}>تحليل النسبة</span>
-                    </div>
-                    <h4 className="text-slate-500 text-xs mb-1 font-medium">{title}</h4>
-                    <div className="flex items-baseline gap-1 mb-3">
-                        <span className="text-2xl font-black text-slate-800">{value}</span>
-                        <span className="text-xs text-slate-400 font-bold">{unit}</span>
-                    </div>
-                    <p className="text-[11px] text-slate-600 leading-relaxed mb-3 pb-3 border-b border-slate-50 italic">{description}</p>
-                    <p className="text-[10px] text-indigo-900 font-medium"><b>التفسير: </b>{interpretation}</p>
+  const RatioCard = ({ title, value, unit, description, interpretation, statusColor }) => (
+    <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex justify-between items-start mb-4">
+        <div className={`p-2 rounded-lg bg-${statusColor}-50 text-${statusColor}-600`}>
+          <Activity size={20} />
+        </div>
+        <span className={`text-[10px] font-bold px-2 py-1 rounded-full bg-${statusColor}-50 text-${statusColor}-600 uppercase`}>
+          تحليل النسبة
+        </span>
+      </div>
+      <h4 className="text-slate-500 text-xs mb-1 font-medium">{title}</h4>
+      <div className="flex items-baseline gap-1 mb-3">
+        <span className="text-2xl font-black text-slate-800">{value}</span>
+        <span className="text-xs text-slate-400 font-bold">{unit}</span>
+      </div>
+      <p className="text-[11px] text-slate-600 leading-relaxed mb-3 pb-3 border-b border-slate-50 italic">
+        {description}
+      </p>
+      <div className="flex items-start gap-2">
+        <Info size={14} className="text-indigo-400 mt-0.5 shrink-0" />
+        <p className="text-[10px] text-indigo-900 font-medium">
+          <span className="font-bold">التفسير المالي: </span>{interpretation}
+        </p>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 overflow-x-hidden" dir="rtl">
+      
+      {/* Mobile Menu Overlay */}
+      <div className={`fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 transition-all duration-500 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+        <div className="flex flex-col items-center justify-center h-full space-y-8">
+          <button onClick={() => setIsMenuOpen(false)} className="absolute top-8 right-8 text-white p-2 border border-white/20 rounded-full hover:bg-white/10">
+            <X size={32} />
+          </button>
+          <div className="flex flex-wrap justify-center gap-6 px-4">
+            {['input', 'statements', 'ratios'].map((tab) => (
+              <button 
+                key={tab}
+                onClick={() => { setActiveTab(tab); setIsMenuOpen(false); }}
+                className="flex flex-col items-center p-6 bg-white/10 hover:bg-white/20 border border-white/20 rounded-3xl transition-all group w-36"
+              >
+                <div className={`p-4 rounded-2xl mb-3 group-hover:scale-110 transition-transform ${tab === 'input' ? 'bg-indigo-500' : tab === 'statements' ? 'bg-blue-600' : 'bg-emerald-500'}`}>
+                  {tab === 'input' ? <PlusCircle className="text-white" /> : tab === 'statements' ? <FileText className="text-white" /> : <BarChart3 className="text-white" />}
                 </div>
-            );
+                <span className="text-white font-medium text-sm">
+                  {tab === 'input' ? 'إدخال البيانات' : tab === 'statements' ? 'القوائم المالية' : 'النسب المالية'}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
-            return (
-                <div className="min-h-screen bg-slate-50 text-slate-900" dir="rtl">
-                    <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-40 px-6 py-4 flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-indigo-900 p-2 rounded-xl text-white"><Icon name="shield-check" /></div>
-                            <div>
-                                <h1 className="text-lg font-bold text-indigo-900 leading-tight">نظام التحليل المالي</h1>
-                                <p className="text-xs text-slate-500">الإصدار الخاص بالمنشآت</p>
-                            </div>
-                        </div>
-                        <button onClick={() => setActiveTab(activeTab === 'welcome' ? 'input' : 'welcome')} className="p-2 bg-indigo-50 text-indigo-900 rounded-xl">
-                            <Icon name="menu" />
-                        </button>
-                    </header>
+      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-40 px-6 py-4 flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <div className="bg-indigo-900 p-2 rounded-xl">
+            <ShieldCheck className="text-white" size={24} />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-indigo-900 leading-tight">نظام التحليل المالي الاستراتيجي</h1>
+            <p className="text-xs text-slate-500">الإصدار الخاص بالمنشآت والمشاريع</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className="hidden md:flex gap-4 ml-4">
+            <button onClick={() => setActiveTab('input')} className={`text-sm font-bold ${activeTab === 'input' ? 'text-indigo-600' : 'text-slate-400'}`}>الإدخال</button>
+            <button onClick={() => setActiveTab('ratios')} className={`text-sm font-bold ${activeTab === 'ratios' ? 'text-indigo-600' : 'text-slate-400'}`}>النسب</button>
+          </div>
+          <button onClick={() => setIsMenuOpen(true)} className="p-2 bg-indigo-50 text-indigo-900 rounded-xl hover:bg-indigo-100 transition-colors">
+            <Menu size={20} />
+          </button>
+        </div>
+      </header>
 
-                    <main className="pt-24 pb-12 px-4 max-w-7xl mx-auto">
-                        {activeTab === 'welcome' && (
-                            <div className="bg-gradient-to-br from-slate-900 to-indigo-900 rounded-[2.5rem] p-8 md:p-16 text-white shadow-2xl">
-                                <h2 className="text-3xl md:text-5xl font-light mb-6">مرحباً بك في نظام التحليل <br/> <span className="font-bold text-emerald-400 text-glow">المالي الاستراتيجي</span></h2>
-                                <p className="text-indigo-100 text-lg mb-10 opacity-90">حول أرقام منشأتك إلى رؤى واضحة بضغطة زر.</p>
-                                <button onClick={() => setActiveTab('input')} className="flex items-center gap-3 bg-emerald-500 hover:bg-emerald-400 px-8 py-4 rounded-2xl font-bold transition-all">ابدأ الإدخال <Icon name="chevron-right" /></button>
-                            </div>
-                        )}
-
-                        {activeTab === 'input' && (
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                <section className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                                    <h3 className="text-lg font-black mb-6 text-indigo-900 flex items-center gap-2"> <Icon name="wallet" /> الميزانية العمومية</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                        <div className="space-y-1">
-                                            <label className="text-[11px] font-bold text-slate-400">الأصول المتداولة</label>
-                                            <input type="number" onChange={(e) => handleInputChange('assets', 'current', e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 outline-none focus:border-indigo-100 border-2 border-transparent" placeholder="0" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-[11px] font-bold text-slate-400">الالتزامات المتداولة</label>
-                                            <input type="number" onChange={(e) => handleInputChange('liabilities', 'current', e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 outline-none focus:border-indigo-100 border-2 border-transparent" placeholder="0" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-[11px] font-bold text-slate-400">المخزون</label>
-                                            <input type="number" onChange={(e) => handleInputChange('inventory', null, e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 outline-none focus:border-indigo-100 border-2 border-transparent" placeholder="0" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-[11px] font-bold text-slate-400">رأس المال</label>
-                                            <input type="number" onChange={(e) => handleInputChange('equity', 'capital', e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 outline-none focus:border-indigo-100 border-2 border-transparent" placeholder="0" />
-                                        </div>
-                                    </div>
-                                    <button onClick={() => setActiveTab('ratios')} className="mt-8 w-full bg-indigo-900 text-white py-4 rounded-2xl font-bold">عرض النتائج والنسب</button>
-                                </section>
-
-                                <div className="space-y-6">
-                                    <section className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                                        <h3 className="text-lg font-black mb-6 text-indigo-900 flex items-center gap-2"><Icon name="trending-up" /> قائمة الدخل</h3>
-                                        <div className="space-y-4">
-                                            <input type="number" placeholder="إجمالي الإيرادات" onChange={(e) => handleInputChange('revenue', null, e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 outline-none focus:border-indigo-100 border-2 border-transparent" />
-                                            <input type="number" placeholder="المصاريف التشغيلية" onChange={(e) => handleInputChange('expenses', null, e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 outline-none focus:border-indigo-100 border-2 border-transparent" />
-                                        </div>
-                                    </section>
-                                </div>
-                            </div>
-                        )}
-
-                        {activeTab === 'ratios' && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <RatioCard 
-                                    title="نسبة التداول" 
-                                    value={ratios.current.toFixed(2)} 
-                                    unit="مرة" 
-                                    description="قدرة المنشأة على سداد ديونها."
-                                    interpretation={ratios.current >= 1.5 ? "وضع آمن" : "سيولة منخفضة"}
-                                    statusColor={ratios.current >= 1.5 ? "emerald" : "orange"}
-                                />
-                                <RatioCard 
-                                    title="هامش الربح" 
-                                    value={ratios.margin.toFixed(1)} 
-                                    unit="%" 
-                                    description="نسبة الربح من المبيعات."
-                                    interpretation={ratios.margin > 10 ? "ربحية جيدة" : "تحتاج مراجعة"}
-                                    statusColor={ratios.margin > 10 ? "indigo" : "slate"}
-                                />
-                                <button onClick={() => setActiveTab('input')} className="p-6 border-2 border-dashed border-slate-200 rounded-[2rem] text-slate-400 hover:border-indigo-400 hover:text-indigo-400 transition-all font-bold text-sm">تعديل البيانات المالية</button>
-                            </div>
-                        )}
-                    </main>
-                    <footer className="text-center py-8 text-slate-400 text-xs">© 2026 جميع الحقوق محفوظة</footer>
+      <main className="pt-24 pb-12 px-4 md:px-8 max-w-7xl mx-auto">
+        
+        {activeTab === 'welcome' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-indigo-900 rounded-[2.5rem] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden">
+              <div className="relative z-10">
+                <h2 className="text-3xl md:text-5xl font-light mb-6 leading-tight">
+                   مرحباً بك في نظام التحليل <br /> 
+                   المخصص <span className="font-bold text-emerald-400 text-glow">لأصحاب المشاريع والمنشآت</span>
+                </h2>
+                <p className="text-indigo-100 text-lg max-w-2xl mb-10 leading-relaxed opacity-90 font-light">
+                   أداة احترافية لتحويل الأرقام الصماء إلى رؤى استراتيجية. قم بإدخال بيانات ميزانيتك، قائمة دخلك وتدفقاتك النقدية للحصول على تقييم فوري لصحة منشأتك المالية.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <button 
+                    onClick={() => setActiveTab('input')}
+                    className="flex items-center gap-3 bg-emerald-500 hover:bg-emerald-400 text-white px-8 py-4 rounded-2xl font-bold transition-all"
+                  >
+                    ابدأ إدخال البيانات
+                    <ChevronRight size={20} />
+                  </button>
                 </div>
-            );
-        };
+              </div>
+            </div>
+          </div>
+        )}
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
+        {activeTab === 'input' && (
+          <div className="animate-in fade-in duration-500">
+            <div className="flex justify-between items-center mb-8">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-800">إدخال البيانات المالية</h2>
+                <p className="text-sm text-slate-500">يرجى ملء كافة الحقول لضمان دقة النسب المالية</p>
+              </div>
+              <button onClick={handleSave} className="flex items-center gap-2 bg-indigo-900 hover:bg-indigo-800 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-indigo-100"><Save size={18} /> حفظ البيانات</button>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* الميزانية العمومية */}
+              <section className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                <h3 className="text-lg font-black mb-6 text-indigo-900 flex items-center gap-2 underline underline-offset-8 decoration-indigo-100"><Wallet size={20} /> الميزانية العمومية (Assets & Liabilities)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {[
+                    { label: 'الأصول المتداولة (النقد وما شابهه)', cat: 'assets', f: 'current' },
+                    { label: 'ذمم المدينين (مستحقاتكم عند الغير)', cat: 'assets', f: 'receivables' },
+                    { label: 'المخزون السلعي', cat: 'inventory', f: null },
+                    { label: 'الأصول الثابتة (أراضي، مباني، معدات)', cat: 'assets', f: 'fixed' },
+                    { label: 'الالتزامات المتداولة (ديون قصيرة)', cat: 'liabilities', f: 'current' },
+                    { label: 'الالتزامات طويلة الأجل (قروض)', cat: 'liabilities', f: 'longTerm' },
+                    { label: 'رأس المال المدفوع', cat: 'equity', f: 'capital' },
+                    { label: 'الأرباح المبقاة (المحتجزة)', cat: 'equity', f: 'retainedEarnings' },
+                  ].map((item, idx) => (
+                    <div key={idx} className="space-y-1.5 group">
+                      <label className="text-[11px] font-bold text-slate-400 group-focus-within:text-indigo-600 transition-colors uppercase tracking-wider">{item.label}</label>
+                      <div className="relative">
+                        <input 
+                          type="number" placeholder="0"
+                          value={item.f ? financialData[item.cat][item.f] || '' : financialData[item.cat] || ''}
+                          onChange={(e) => handleInputChange(item.cat, item.f, e.target.value)}
+                          className="w-full bg-slate-50 border-2 border-transparent focus:border-indigo-100 focus:bg-white rounded-xl px-4 py-3 outline-none text-sm font-black transition-all"
+                        />
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] text-slate-300 font-bold">{currency}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <div className="space-y-8">
+                {/* الدخل */}
+                <section className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                  <h3 className="text-lg font-black mb-6 text-indigo-900 flex items-center gap-2 underline underline-offset-8 decoration-indigo-100"><TrendingUp size={20} /> قائمة الدخل (P&L)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {[
+                      { label: 'إجمالي المبيعات / الإيرادات', cat: 'revenue' },
+                      { label: 'تكلفة البضاعة المباعة', cat: 'cogs' },
+                      { label: 'المصاريف التشغيلية (إيجار، رواتب..)', cat: 'expenses' },
+                    ].map((item, idx) => (
+                      <div key={idx} className="space-y-1.5">
+                        <label className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">{item.label}</label>
+                        <input 
+                          type="number" placeholder="0"
+                          value={financialData[item.cat] || ''}
+                          onChange={(e) => handleInputChange(item.cat, null, e.target.value)}
+                          className="w-full bg-slate-50 border-2 border-transparent focus:border-indigo-100 focus:bg-white rounded-xl px-4 py-3 outline-none text-sm font-black transition-all"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* التدفقات */}
+                <section className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                  <h3 className="text-lg font-black mb-6 text-blue-900 flex items-center gap-2 underline underline-offset-8 decoration-blue-100"><Coins size={20} /> قائمة التدفقات النقدية (Cash Flow)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { label: 'أنشطة تشغيلية', f: 'operating' },
+                      { label: 'أنشطة استثمارية', f: 'investing' },
+                      { label: 'أنشطة تمويلية', f: 'financing' },
+                    ].map((item, idx) => (
+                      <div key={idx} className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-400">{item.label}</label>
+                        <input 
+                          type="number" placeholder="0"
+                          value={financialData.cashFlow[item.f] || ''}
+                          onChange={(e) => handleInputChange('cashFlow', item.f, e.target.value)}
+                          className="w-full bg-blue-50/30 border-2 border-transparent focus:border-blue-100 focus:bg-white rounded-xl px-4 py-3 outline-none text-sm font-black text-blue-900 transition-all"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'statements' && (
+          <div className="animate-in fade-in duration-500 space-y-8">
+            <h2 className="text-2xl font-bold text-slate-800">المركز المالي والأداء</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                <h3 className="text-lg font-black mb-6 border-b border-slate-50 pb-4 text-slate-800">تحليل الميزانية</h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500">إجمالي الأصول</span>
+                    <span className="font-black text-lg">{totalAssets.toLocaleString()} <span className="text-[10px] text-slate-400">{currency}</span></span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500">إجمالي الالتزامات</span>
+                    <span className="font-black text-lg text-rose-600">{totalLiabilities.toLocaleString()} <span className="text-[10px] text-slate-400">{currency}</span></span>
+                  </div>
+                  <div className="flex justify-between items-center p-4 bg-emerald-50 rounded-2xl">
+                    <span className="text-emerald-900 font-bold">حقوق الملكية</span>
+                    <span className="font-black text-xl text-emerald-700">{totalEquity.toLocaleString()} <span className="text-[10px] text-emerald-400">{currency}</span></span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div className="p-3 bg-slate-50 rounded-xl">
+                      <p className="text-[10px] text-slate-400 uppercase font-bold mb-1">صافي الربح</p>
+                      <p className="font-black text-indigo-900">{netIncome.toLocaleString()}</p>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-xl">
+                      <p className="text-[10px] text-slate-400 uppercase font-bold mb-1">الأرباح المبقاة</p>
+                      <p className="font-black text-indigo-900">{financialData.equity.retainedEarnings.toLocaleString()}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                <h3 className="text-lg font-black mb-6 border-b border-slate-50 pb-4 text-slate-800">حركة النقد</h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500">التدفق التشغيلي</span>
+                    <span className={`font-black ${financialData.cashFlow.operating >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      {financialData.cashFlow.operating.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500">التدفق الاستثماري</span>
+                    <span className="font-black">{financialData.cashFlow.investing.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500">التدفق التمويلي</span>
+                    <span className="font-black">{financialData.cashFlow.financing.toLocaleString()}</span>
+                  </div>
+                  <div className="h-px bg-slate-50 my-2"></div>
+                  <div className="flex justify-between items-center p-6 bg-slate-900 text-white rounded-[2rem]">
+                    <span className="font-light">صافي التدفق النقدي</span>
+                    <span className="text-2xl font-black">{totalCashFlow.toLocaleString()} <span className="text-xs opacity-50">{currency}</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'ratios' && (
+          <div className="animate-in fade-in duration-500">
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-slate-800">لوحة تحليل النسب المالية</h2>
+              <p className="text-sm text-slate-500 italic">هذه النسب تعكس كفاءة الإدارة وقوة المركز المالي للمنشأة</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <RatioCard 
+                title="نسبة التداول (Current Ratio)"
+                value={ratios.current.toFixed(2)}
+                unit="مرة"
+                description="تقيس قدرة المنشأة على سداد ديونها قصيرة الأجل باستخدام أصولها المتداولة."
+                interpretation={ratios.current >= 1.5 ? "ممتاز. لديكم سيولة كافية لتغطية الالتزامات." : "حذر. قد تواجه المنشأة صعوبة في الوفاء بالتزاماتها الفورية."}
+                statusColor={ratios.current >= 1.5 ? "emerald" : "orange"}
+              />
+              <RatioCard 
+                title="نسبة السيولة السريعة (Quick Ratio)"
+                value={ratios.quick.toFixed(2)}
+                unit="مرة"
+                description="نفس النسبة السابقة ولكن بعد استبعاد المخزون (لأنه يصعب تسييله بسرعة)."
+                interpretation={ratios.quick >= 1 ? "آمن. المنشأة قادرة على السداد حتى بدون بيع المخزون." : "ضعيف. المنشأة تعتمد بشكل كبير على بيع المخزون لسداد ديونها."}
+                statusColor={ratios.quick >= 1 ? "blue" : "rose"}
+              />
+              <RatioCard 
+                title="هامش صافي الربح (Net Profit Margin)"
+                value={ratios.margin.toFixed(1)}
+                unit="%"
+                description="يوضح النسبة المئوية المتبقية من كل دينار مبيعات بعد طرح كافة التكاليف والمصاريف."
+                interpretation={ratios.margin > 15 ? "ربحية عالية. المنشأة تدير تكاليفها بكفاءة ممتازة." : "ربحية منخفضة. يجب مراجعة المصاريف التشغيلية أو زيادة المبيعات."}
+                statusColor={ratios.margin > 15 ? "indigo" : "slate"}
+              />
+              <RatioCard 
+                title="نسبة الدين إلى الملكية (Debt-to-Equity)"
+                value={ratios.dToE.toFixed(2)}
+                unit="نسبة"
+                description="تقيس مدى اعتماد المنشأة على الديون والقروض مقابل تمويل الملاك."
+                interpretation={ratios.dToE <= 1 ? "توازن صحي. التمويل الذاتي يتفوق على الديون الخارجية." : "خطر تمويلي. الاعتماد على الديون مرتفع جداً مما يزيد الضغط المالي."}
+                statusColor={ratios.dToE <= 1 ? "emerald" : "rose"}
+              />
+            </div>
+
+            <div className="mt-8 bg-indigo-50 p-6 rounded-[2rem] border border-indigo-100 flex items-start gap-4">
+              <Zap className="text-indigo-600 shrink-0 mt-1" />
+              <div>
+                <h4 className="font-bold text-indigo-900 mb-1">نصيحة استراتيجية لأصحاب المنشآت</h4>
+                <p className="text-sm text-indigo-700 leading-relaxed">
+                  النسب المالية هي "ترمومتر" المنشأة. إذا وجدت <b>نسبة التداول</b> منخفضة، ركز على تحصيل <b>ذمم المدينين</b> أو تخفيض المصاريف. وإذا كانت <b>نسبة الدين للملكية</b> مرتفعة، فكر في ضخ رأس مال جديد بدلاً من الاقتراض لتقليل المخاطر المالية.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </main>
+
+      <footer className="text-center py-12 text-slate-400 text-xs font-medium border-t border-slate-100">
+        &copy; 2026 نظام التحليل المالي للمنشآت والمشاريع . جميع الحقوق محفوظة
+      </footer>
+
+      {showSaveMessage && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-10 py-5 rounded-3xl shadow-2xl z-50 animate-in slide-in-from-bottom-12 flex items-center gap-3">
+          <div className="bg-emerald-500 p-1 rounded-full"><ShieldCheck size={16} /></div>
+          <span className="font-bold">تم تحديث السجلات المالية بنجاح.</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;
