@@ -3,160 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام التحليل المالي الرقمي</title>
+    <title>بوصلة هدايه - الوضوح الرقمي  </title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
-        :root { --royal-purple: #3f3d99; --vibrant-green: #00d27a; --soft-bg: #f8faff; }
-        body { font-family: 'Tajawal', sans-serif; background-color: #f1f5f9; margin: 0; }
-        .app-container { width: 100%; max-width: 450px; min-height: 100vh; background-color: var(--soft-bg); margin: auto; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.1); }
-        .page { display: none; }
-        .active { display: block; animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .card { background: white; border-radius: 24px; padding: 20px; margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.05); }
-        .custom-input { width: 100%; padding: 12px 16px; border-radius: 14px; border: 1.5px solid #e2e8f0; background: #fdfdfd; font-weight: 600; margin-top: 6px; }
-        .btn-primary { background: linear-gradient(135deg, var(--royal-purple), #5a58c7); color: white; padding: 18px; border-radius: 18px; font-weight: 700; width: 100%; box-shadow: 0 4px 15px rgba(63, 61, 153, 0.3); }
-        .label-text { font-size: 12px; color: #64748b; font-weight: 700; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8f9fa;
+            color: #0A194E;
+            overflow-x: hidden;
+        }
+        /* الكحلي الملكي المتدرج */
+        .royal-gradient {
+            background: radial-gradient(circle at center, #1A3F75 0%, #00002A 100%);
+        }
+        .gold-text { color: #C5A048; }
+        .gold-bg { background-color: #C5A048; }
+        .gold-border { border-color: #C5A048; }
+        
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-bottom: 3px solid transparent;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(10, 25, 78, 0.1);
+            border-bottom: 3px solid #C5A048;
+        }
+        
+        .pulse-gold {
+            animation: pulse-gold 2s infinite;
+        }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0px rgba(197, 160, 72, 0.4); }
+            100% { box-shadow: 0 0 0 20px rgba(197, 160, 72, 0); }
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
     </style>
 </head>
-<body>
+<body class="bg-gray-50">
 
-<div class="app-container">
-    <div id="login-page" class="page active flex flex-col h-screen overflow-hidden">
-        <div class="flex-1 bg-[#3f3d99] flex flex-col items-center justify-center p-8 text-white text-center">
-            <div class="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-6 backdrop-blur-md">
-                <i class="fas fa-fingerprint text-4xl text-vibrant-green"></i>
+    <div class="max-w-6xl mx-auto my-6 md:my-12 bg-white shadow-2xl rounded-[2.5rem] overflow-hidden border gold-border flex flex-col md:flex-row shadow-blue-900/20">
+        
+        <!-- الجانب الأيمن: الهوية والسيادة -->
+        <aside class="royal-gradient w-full md:w-5/12 p-12 flex flex-col items-center text-center text-white relative">
+            <!-- الشعار -->
+            <div class="floating w-28 h-28 rounded-[2rem] bg-white flex items-center justify-center text-5xl font-black text-[#0A194E] mb-10 shadow-[0_0_30px_rgba(197,160,72,0.3)] border-2 border-[#C5A048]">
+                H
             </div>
-            <h1 class="text-2xl font-bold mb-2">نظام التحليل المالي</h1>
-            <p class="text-blue-100 text-sm opacity-70">الرجاء إدخال رمز الوصول للمتابعة</p>
-        </div>
-        <div class="flex-[1.2] bg-white p-10 -mt-12 rounded-t-[50px] flex flex-col items-center shadow-2xl">
-            <input type="password" id="pinInput" class="w-full text-center text-4xl tracking-[0.4em] border-b-2 border-gray-100 focus:border-royal-purple outline-none pb-4 mb-12" placeholder="••••">
-            <button onclick="checkPin()" class="btn-primary">دخول</button>
-        </div>
-    </div>
+            
+            <h1 class="text-4xl font-black mb-6 gold-text tracking-tight">بوصلة هدايه</h1>
+            <p class="text-base leading-relaxed text-blue-100 mb-10 font-light px-4">
+                هي نظام مالي رقمي (Digital Financial System) مصمم خصيصاً لسد الفجوة بين "العمليات اليومية" و"النتائج المالية النهائية"   <span class="font-bold gold-text"> </span>. 
+            </p>
 
-    <div id="main-content" class="hidden">
-        <header class="p-5 bg-white flex justify-between items-center sticky top-0 z-50 border-b border-gray-50 shadow-sm">
-            <button onclick="location.reload()" class="text-royal-purple"><i class="fas fa-arrow-right"></i></button>
-            <h2 class="text-[15px] font-bold text-royal-purple">لوحة التحكم المالية</h2>
-            <i class="fas fa-gem text-vibrant-green"></i>
-        </header>
+            <!-- بطاقة إحصائية سريعة -->
+            <div class="w-full space-y-6 text-right">
+                <div class="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 hover:border-[#C5A048]/50 transition-colors">
+                    <h3 class="gold-text font-black mb-2 flex items-center gap-2 text-sm">
+                        <span>🧭</span> جوهر الابتكار
+                    </h3>
+                    <p class="text-xs text-blue-100 leading-relaxed">
+                        نظام فريد يدمج بين قوة المحاسبة وبساطة الأدوات الرقمية، لتمكينك من رؤية الوفرة في كل عملية.
+                    </p>
+                </div>
 
-        <div id="entry-page" class="page active p-6">
-            <div class="card border-r-4 border-royal-purple">
-                <h3 class="font-bold text-sm text-royal-purple mb-4"><i class="fas fa-file-invoice ml-2"></i>بيانات الدخل والمركز المالي</h3>
-                <div class="space-y-4">
-                    <div><label class="label-text">صافي المبيعات</label><input type="number" id="sales" class="custom-input" placeholder="0"></div>
-                    <div><label class="label-text">تكلفة البضاعة والمصاريف</label><input type="number" id="expenses" class="custom-input" placeholder="0"></div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="label-text">الأصول المتداولة</label><input type="number" id="curAssets" class="custom-input" placeholder="0"></div>
-                        <div><label class="label-text">الالتزامات المتداولة</label><input type="number" id="curLiab" class="custom-input" placeholder="0"></div>
+                <div class="px-2">
+                    <h3 class="gold-text font-black border-b border-[#C5A048]/20 pb-2 text-sm mb-4">  </h3>الفئة المستهدفة (Target Audience)
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-[10px] bg-white/10 px-3 py-1 rounded-full border border-white/5">أصحاب المشاريع الناشئة</span>
+                        <span class="text-[10px] bg-white/10 px-3 py-1 rounded-full border border-white/5">الشركات الصغيرة</span>
+                        <span class="text-[10px] bg-white/10 px-3 py-1 rounded-full border border-white/5"> العمل الحر</span>
                     </div>
                 </div>
             </div>
 
-            <div class="card border-r-4 border-vibrant-green">
-                <h3 class="font-bold text-sm text-green-700 mb-4"><i class="fas fa-money-bill-transfer ml-2"></i>التدفقات النقدية</h3>
-                <div class="space-y-4">
-                    <div><label class="label-text">تدفق تشغيلي</label><input type="number" id="cf_op" class="custom-input" placeholder="0"></div>
-                    <div><label class="label-text">تدفق استثماري / تمويلي</label><input type="number" id="cf_inv_fin" class="custom-input" placeholder="0"></div>
+            <div class="mt-auto pt-12">
+                <div class="flex items-center justify-center gap-4 mb-4">
+                    <div class="h-[1px] w-8 bg-[#C5A048]/40"></div>
+                    <span class="text-[10px] text-[#C5A048] uppercase tracking-[0.3em] font-bold">EST. 2026</span>
+                    <div class="h-[1px] w-8 bg-[#C5A048]/40"></div>
                 </div>
             </div>
+        </aside>
 
-            <button onclick="processData()" class="btn-primary mt-4">إصدار التقارير</button>
-        </div>
+        <!-- الجانب الأيسر: هندسة المحتوى والوضوح -->
+        <main class="w-full md:w-7/12 p-8 md:p-16 bg-white flex flex-col justify-center">
+            
+            <header class="mb-14">
+                <div class="inline-flex items-center gap-2 bg-[#C5A048]/10 text-[#C5A048] text-[11px] font-black px-4 py-1.5 rounded-full mb-6 border border-[#C5A048]/20">
+                    <span class="w-2 h-2 rounded-full gold-bg animate-pulse"></span>
+                     المنتج الرقمي 
+                </div>
+                <h2 class="text-4xl md:text-5xl font-black text-[#0A194E] leading-tight">
+                      <br>
+                    <span class="gold-text">القيمة المضافة (Value Proposition)</span>
+                </h2>
+                <p class="text-gray-400 mt-6 text-base font-light italic border-r-2 gold-border pr-4">
+                    "ما لا يمكن قياسه، لا يمكن إدارته."
+                </p>
+            </header>
 
-        <div id="results-page" class="page p-6">
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="card flex flex-col items-center justify-center p-4">
-                    <i class="fas fa-droplet text-blue-500 mb-2"></i>
-                    <p class="text-[10px] font-bold text-gray-400">نسبة السيولة</p>
-                    <p id="res_liq" class="text-lg font-bold">0.0</p>
+            <!-- المميزات الأساسية (Grid) -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                <div class="feature-card p-8 bg-gray-50 rounded-[2rem]">
+                    <div class="text-3xl mb-4 text-[#C5A048]">📊</div>
+                    <h4 class="font-black text-[#0A194E] mb-3 text-lg">الوضوح الرقمي الفوري</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">رؤية شاملة للتدفقات النقدية (Inflow & Outflow) بضغطة زر.</p>
                 </div>
-                <div class="card flex flex-col items-center justify-center p-4">
-                    <i class="fas fa-arrow-up-right-dots text-vibrant-green mb-2"></i>
-                    <p class="text-[10px] font-bold text-gray-400">هامش الربح</p>
-                    <p id="res_margin" class="text-lg font-bold">0%</p>
+                <div class="feature-card p-8 bg-gray-50 rounded-[2rem]">
+                    <div class="text-3xl mb-4 text-[#C5A048]">⚖️</div>
+                    <h4 class="font-black text-[#0A194E] mb-3 text-lg">بيان قائمة المركز المالي </h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">توازن تلقائي بين الأصول والالتزامات، لتضمن أن مشروعك يبني ثروة حقيقية.</p>
                 </div>
+                <div class="feature-card p-8 bg-gray-50 rounded-[2rem]">
+                    <div class="text-3xl mb-4 text-[#C5A048]">🚀</div>
+                    <h4 class="font-black text-[#0A194E] mb-3 text-lg"> سهولة الوصول</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">نظام يختصر عليكِ ساعات الجرد اليدوي.</p>
+                </div>
+                <div class="feature-card p-8 bg-gray-50 rounded-[2rem]">
+                    <div class="text-3xl mb-4 text-[#C5A048]">🔒</div>
+                    <h4 class="font-black text-[#0A194E] mb-3 text-lg">أمان البيانات</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">نطام مرن و خصوصية مطلقة؛ بياناتك محفوظة محلياً على جهازك، لا يطلع عليها أحد سواك.</p>
+                </div>
+            </section>
+
+            <!-- منطقة التحويل (CTA) -->
+            <div class="bg-[#0A194E] p-10 rounded-[2.5rem] text-center relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-tr from-[#C5A048]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <h3 class="text-2xl font-black gold-text mb-6 relative z-10"> النظام الرقمي الأول المخصص لأصحاب المشاريع والشركات الناشئة لضمان الوضوح التام</h3>
+                
+                <button class="pulse-gold gold-bg text-[#0A194E] px-14 py-5 rounded-2xl font-black text-xl hover:scale-105 active:scale-95 transition-all relative z-10">
+                        
+طلب نسختك الآن
+                </button>
+                
+                <p class="text-blue-200/50 text-[10px] mt-6 tracking-widest relative z-10">     
+بوصلة هدايه2026|نطام السيادة المطلق  </p>
             </div>
 
-            <div class="card bg-royal-purple text-white">
-                <div class="flex justify-between items-center border-b border-white/10 pb-3 mb-3">
-                    <span class="text-xs opacity-80">صافي التدفق النقدي</span>
-                    <span id="res_cash" class="font-bold">0 JOD</span>
+            <!-- تذييل الصفحة -->
+            <footer class="mt-12 flex items-center justify-between border-t border-gray-100 pt-8">
+                <div class="flex gap-4">
+                    <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs opacity-50">📱</span>
+                    <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs opacity-50">🌐</span>
                 </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-xs opacity-80">صافي الربح</span>
-                    <span id="res_net" class="font-bold">0 JOD</span>
-                </div>
-            </div>
+                <p class="text-[10px] text-gray-300">تصميم وتنفيذ  المحاسبة هدايه</p>
+            </footer>
 
-            <div id="advice-box" class="card border-r-4 border-amber-400 bg-amber-50">
-                <h4 class="text-xs font-bold text-amber-800 mb-2"><i class="fas fa-lightbulb ml-1"></i> نصيحة النظام التحليلي:</h4>
-                <p id="advice_text" class="text-[11px] text-amber-900 leading-relaxed italic"></p>
-            </div>
-
-            <button onclick="showPage('entry-page')" class="btn-primary bg-gray-600 mt-4 shadow-none">تعديل البيانات</button>
-        </div>
+        </main>
     </div>
-</div>
-
-<script>
-    function checkPin() {
-        if(document.getElementById('pinInput').value === "2003") {
-            document.getElementById('login-page').style.display = 'none';
-            document.getElementById('main-content').classList.remove('hidden');
-        } else {
-            alert("الرمز غير صحيح.");
-        }
-    }
-
-    function processData() {
-        // المدخلات
-        const s = parseFloat(document.getElementById('sales').value) || 0;
-        const e = parseFloat(document.getElementById('expenses').value) || 0;
-        const ca = parseFloat(document.getElementById('curAssets').value) || 0;
-        const cl = parseFloat(document.getElementById('curLiab').value) || 0;
-        const cop = parseFloat(document.getElementById('cf_op').value) || 0;
-        const cinv = parseFloat(document.getElementById('cf_inv_fin').value) || 0;
-
-        // الحسابات
-        const netProfit = s - e;
-        const liquidity = cl > 0 ? (ca / cl).toFixed(2) : 0;
-        const margin = s > 0 ? ((netProfit / s) * 100).toFixed(1) : 0;
-        const netCF = cop + cinv;
-
-        // العرض
-        document.getElementById('res_liq').innerText = liquidity;
-        document.getElementById('res_margin').innerText = margin + "%";
-        document.getElementById('res_net').innerText = netProfit.toLocaleString() + " JOD";
-        document.getElementById('res_cash').innerText = netCF.toLocaleString() + " JOD";
-
-        // منطق النصائح الذكي
-        let advice = "";
-        if (liquidity < 1) advice = "تنبيه: نسبة السيولة منخفضة، يفضل تحويل بعض الأصول لسيولة لمواجهة الالتزامات.";
-        else if (margin > 20) advice = "أداء ممتاز: هامش الربح مرتفع، يمكنك التفكير في التوسع أو الاستثمار الإضافي.";
-        else advice = "الوضع المالي مستقر حالياً، ينصح بمراقبة المصاريف التشغيلية لزيادة الهامش.";
-
-        document.getElementById('advice_text').innerText = advice;
-
-        showPage('results-page');
-    }
-
-    function showPage(pageId) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        if(pageId === 'entry-page') {
-            document.getElementById('entry-page').classList.add('active');
-            document.getElementById('results-page').classList.add('hidden');
-        } else {
-            document.getElementById('entry-page').classList.remove('active');
-            document.getElementById('results-page').classList.remove('hidden');
-            document.getElementById('results-page').classList.add('active');
-        }
-    }
-</script>
 
 </body>
 </html>
+
