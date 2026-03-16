@@ -2,167 +2,256 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوصلة هدايه - الوضوح الرقمي  </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>منصة هدايه المتكاملة | بوصلة السيادة</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: #f8f9fa;
-            color: #0A194E;
-            overflow-x: hidden;
-        }
-        /* الكحلي الملكي المتدرج */
-        .royal-gradient {
-            background: radial-gradient(circle at center, #1A3F75 0%, #00002A 100%);
-        }
+        body { font-family: 'Cairo', sans-serif; background-color: #0A194E; color: white; margin: 0; overflow-x: hidden; }
+        
+        /* تأثيرات الانتقال بين الصفحات */
+        .main-page { display: none; min-height: 100vh; width: 100%; animation: fadeIn 0.5s ease; }
+        .main-page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* التنسيقات الخاصة بالهوية البصرية */
+        .royal-gradient { background: radial-gradient(circle at center, #1A3F75 0%, #00002A 100%); }
         .gold-text { color: #C5A048; }
         .gold-bg { background-color: #C5A048; }
         .gold-border { border-color: #C5A048; }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(197, 160, 72, 0.2); border-radius: 30px; }
         
-        .feature-card {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-bottom: 3px solid transparent;
-        }
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(10, 25, 78, 0.1);
-            border-bottom: 3px solid #C5A048;
-        }
-        
-        .pulse-gold {
-            animation: pulse-gold 2s infinite;
-        }
-        @keyframes pulse-gold {
-            0% { box-shadow: 0 0 0 0px rgba(197, 160, 72, 0.4); }
-            100% { box-shadow: 0 0 0 20px rgba(197, 160, 72, 0); }
-        }
+        /* تنسيق لوحة التحكم المالية */
+        .dark-card { background-color: #00002A; color: white; border-radius: 40px; border: 1px solid #C5A048; padding: 25px; }
+        .nav-icon-link { width: 50px; height: 50px; background: #1A3F75; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; color: #F1E5AC; cursor: pointer; transition: 0.3s; }
+        .nav-icon-link.active { background: #C5A048; color: #00002A; box-shadow: 0 0 15px #C5A048; }
 
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
+        /* تنسيقات صفحة التعريف */
+        .feature-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-bottom: 3px solid transparent; }
+        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(10, 25, 78, 0.1); border-bottom: 3px solid #C5A048; }
+        .pulse-gold { animation: pulse-gold 2s infinite; }
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 0 0px rgba(197, 160, 72, 0.4); } 100% { box-shadow: 0 0 0 20px rgba(197, 160, 72, 0); } }
+        .floating { animation: floating 3s ease-in-out infinite; }
+        @keyframes floating { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+
+        /* تنسيقات لوحة التحكم الإضافية */
+        .white-card { background: white; border-radius: 35px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eee; color: #1a1a1a; }
+        .record-item { border-right: 4px solid #C5A048; }
+        .stat-card { padding: 30px; margin-bottom: 15px; box-shadow: 0 20px 40px rgba(0,0,42,0.3); position: relative; overflow: hidden; }
+        .stat-card .value { font-size: 34px; font-weight: 900; color: #C5A048; }
+        
+        #overlay { z-index: 90; }
+        #side-menu { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(100%); z-index: 100; }
+        #side-menu.open { transform: translateX(0); }
+        .menu-btn { width: 50px; height: 50px; background: #00002A; border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; cursor: pointer; border: 1px solid #C5A048; }
+        .menu-btn div { width: 25px; height: 3px; background: #C5A048; border-radius: 2px; }
     </style>
 </head>
-<body class="bg-gray-50">
+<body>
 
-    <div class="max-w-6xl mx-auto my-6 md:my-12 bg-white shadow-2xl rounded-[2.5rem] overflow-hidden border gold-border flex flex-col md:flex-row shadow-blue-900/20">
-        
-        <!-- الجانب الأيمن: الهوية والسيادة -->
-        <aside class="royal-gradient w-full md:w-5/12 p-12 flex flex-col items-center text-center text-white relative">
-            <!-- الشعار -->
-            <div class="floating w-28 h-28 rounded-[2rem] bg-white flex items-center justify-center text-5xl font-black text-[#0A194E] mb-10 shadow-[0_0_30px_rgba(197,160,72,0.3)] border-2 border-[#C5A048]">
-                H
-            </div>
+    <div id="page-portal" class="main-page active flex items-center justify-center p-6 royal-gradient">
+        <div class="glass-card p-10 w-full max-w-md text-center shadow-2xl">
+            <div class="w-20 h-20 bg-white rounded-3xl mx-auto mb-6 flex items-center justify-center text-4xl font-black text-[#0A194E] border-4 border-[#C5A048] shadow-xl">H</div>
+            <h1 class="text-2xl font-black mb-2 gold-text">دليل التعريف بالبوصلة</h1>
+            <p class="text-[10px] text-gray-400 tracking-[0.3em] uppercase mb-10">البوابة الرقمية</p>
             
-            <h1 class="text-4xl font-black mb-6 gold-text tracking-tight">بوصلة هدايه</h1>
-            <p class="text-base leading-relaxed text-blue-100 mb-10 font-light px-4">
-                هي نظام مالي رقمي (Digital Financial System) مصمم خصيصاً لسد الفجوة بين "العمليات اليومية" و"النتائج المالية النهائية"   <span class="font-bold gold-text"> </span>. 
-            </p>
-
-            <!-- بطاقة إحصائية سريعة -->
-            <div class="w-full space-y-6 text-right">
-                <div class="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 hover:border-[#C5A048]/50 transition-colors">
-                    <h3 class="gold-text font-black mb-2 flex items-center gap-2 text-sm">
-                        <span>🧭</span> جوهر الابتكار
-                    </h3>
-                    <p class="text-xs text-blue-100 leading-relaxed">
-                        نظام فريد يدمج بين قوة المحاسبة وبساطة الأدوات الرقمية، لتمكينك من رؤية الوفرة في كل عملية.
-                    </p>
-                </div>
-
-                <div class="px-2">
-                    <h3 class="gold-text font-black border-b border-[#C5A048]/20 pb-2 text-sm mb-4">  </h3>الفئة المستهدفة (Target Audience)
-                    <div class="flex flex-wrap gap-2">
-                        <span class="text-[10px] bg-white/10 px-3 py-1 rounded-full border border-white/5">أصحاب المشاريع الناشئة</span>
-                        <span class="text-[10px] bg-white/10 px-3 py-1 rounded-full border border-white/5">الشركات الصغيرة</span>
-                        <span class="text-[10px] bg-white/10 px-3 py-1 rounded-full border border-white/5"> العمل الحر</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-auto pt-12">
-                <div class="flex items-center justify-center gap-4 mb-4">
-                    <div class="h-[1px] w-8 bg-[#C5A048]/40"></div>
-                    <span class="text-[10px] text-[#C5A048] uppercase tracking-[0.3em] font-bold">EST. 2026</span>
-                    <div class="h-[1px] w-8 bg-[#C5A048]/40"></div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- الجانب الأيسر: هندسة المحتوى والوضوح -->
-        <main class="w-full md:w-7/12 p-8 md:p-16 bg-white flex flex-col justify-center">
-            
-            <header class="mb-14">
-                <div class="inline-flex items-center gap-2 bg-[#C5A048]/10 text-[#C5A048] text-[11px] font-black px-4 py-1.5 rounded-full mb-6 border border-[#C5A048]/20">
-                    <span class="w-2 h-2 rounded-full gold-bg animate-pulse"></span>
-                     المنتج الرقمي 
-                </div>
-                <h2 class="text-4xl md:text-5xl font-black text-[#0A194E] leading-tight">
-                      <br>
-                    <span class="gold-text">القيمة المضافة (Value Proposition)</span>
-                </h2>
-                <p class="text-gray-400 mt-6 text-base font-light italic border-r-2 gold-border pr-4">
-                    "ما لا يمكن قياسه، لا يمكن إدارته."
-                </p>
-            </header>
-
-            <!-- المميزات الأساسية (Grid) -->
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-                <div class="feature-card p-8 bg-gray-50 rounded-[2rem]">
-                    <div class="text-3xl mb-4 text-[#C5A048]">📊</div>
-                    <h4 class="font-black text-[#0A194E] mb-3 text-lg">الوضوح الرقمي الفوري</h4>
-                    <p class="text-xs text-gray-500 leading-relaxed">رؤية شاملة للتدفقات النقدية (Inflow & Outflow) بضغطة زر.</p>
-                </div>
-                <div class="feature-card p-8 bg-gray-50 rounded-[2rem]">
-                    <div class="text-3xl mb-4 text-[#C5A048]">⚖️</div>
-                    <h4 class="font-black text-[#0A194E] mb-3 text-lg">بيان قائمة المركز المالي </h4>
-                    <p class="text-xs text-gray-500 leading-relaxed">توازن تلقائي بين الأصول والالتزامات، لتضمن أن مشروعك يبني ثروة حقيقية.</p>
-                </div>
-                <div class="feature-card p-8 bg-gray-50 rounded-[2rem]">
-                    <div class="text-3xl mb-4 text-[#C5A048]">🚀</div>
-                    <h4 class="font-black text-[#0A194E] mb-3 text-lg"> سهولة الوصول</h4>
-                    <p class="text-xs text-gray-500 leading-relaxed">نظام يختصر عليكِ ساعات الجرد اليدوي.</p>
-                </div>
-                <div class="feature-card p-8 bg-gray-50 rounded-[2rem]">
-                    <div class="text-3xl mb-4 text-[#C5A048]">🔒</div>
-                    <h4 class="font-black text-[#0A194E] mb-3 text-lg">أمان البيانات</h4>
-                    <p class="text-xs text-gray-500 leading-relaxed">نطام مرن و خصوصية مطلقة؛ بياناتك محفوظة محلياً على جهازك، لا يطلع عليها أحد سواك.</p>
-                </div>
-            </section>
-
-            <!-- منطقة التحويل (CTA) -->
-            <div class="bg-[#0A194E] p-10 rounded-[2.5rem] text-center relative overflow-hidden group">
-                <div class="absolute inset-0 bg-gradient-to-tr from-[#C5A048]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                
-                <h3 class="text-2xl font-black gold-text mb-6 relative z-10"> النظام الرقمي الأول المخصص لأصحاب المشاريع والشركات الناشئة لضمان الوضوح التام</h3>
-                
-                <button class="pulse-gold gold-bg text-[#0A194E] px-14 py-5 rounded-2xl font-black text-xl hover:scale-105 active:scale-95 transition-all relative z-10">
-                        
-طلب نسختك الآن
+            <div class="space-y-4">
+                <button onclick="navigateTo('page-about')" class="gold-bg w-full py-5 rounded-2xl text-[#0A194E] font-black flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all">
+                    <i data-lucide="info"></i> 🧭 عن مشروع البوصلة
                 </button>
-                
-                <p class="text-blue-200/50 text-[10px] mt-6 tracking-widest relative z-10">     
-بوصلة هدايه2026|نطام السيادة المطلق  </p>
+                <button onclick="navigateTo('page-dashboard')" class="w-full py-5 rounded-2xl border-2 border-[#C5A048]/30 text-[#C5A048] font-bold flex items-center justify-center gap-3 hover:bg-[#C5A048]/5 transition-all">
+                    <i data-lucide="layout-dashboard"></i> 📊 الدخول للوحة التحكم
+                </button>
             </div>
-
-            <!-- تذييل الصفحة -->
-            <footer class="mt-12 flex items-center justify-between border-t border-gray-100 pt-8">
-                <div class="flex gap-4">
-                    <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs opacity-50">📱</span>
-                    <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs opacity-50">🌐</span>
-                </div>
-                <p class="text-[10px] text-gray-300">تصميم وتنفيذ  المحاسبة هدايه</p>
-            </footer>
-
-        </main>
+            <p class="mt-8 text-[9px] text-gray-500 italic">"نحو وعي مالي رقمي 2026"</p>
+        </div>
     </div>
 
+    <div id="page-about" class="main-page bg-gray-50 text-[#0A194E]">
+        <div class="max-w-6xl mx-auto p-8">
+            <button onclick="navigateTo('page-portal')" class="mb-8 flex items-center gap-2 font-bold text-[#C5A048]">
+                <i data-lucide="arrow-right"></i> العودة للبوابة
+            </button>
+            
+            <div class="max-w-6xl mx-auto bg-white shadow-2xl rounded-[2.5rem] overflow-hidden border gold-border flex flex-col md:flex-row shadow-blue-900/20">
+                <aside class="royal-gradient w-full md:w-5/12 p-12 flex flex-col items-center text-center text-white relative">
+                    <div class="floating w-28 h-28 rounded-[2rem] bg-white flex items-center justify-center text-5xl font-black text-[#0A194E] mb-10 shadow-[0_0_30px_rgba(197,160,72,0.3)] border-2 border-[#C5A048]">H</div>
+                    <h1 class="text-4xl font-black mb-6 gold-text tracking-tight">بوصلة هدايه</h1>
+                    <p class="text-base leading-relaxed text-blue-100 mb-10 font-light px-4">
+                        هي نظام مالي رقمي (Digital Financial System) مصمم خصيصاً لسد الفجوة بين "العمليات اليومية" و"النتائج المالية النهائية". 
+                    </p>
+                    <div class="w-full space-y-6 text-right">
+                        <div class="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10">
+                            <h3 class="gold-text font-black mb-2 flex items-center gap-2 text-sm"><span>🧭</span> جوهر الابتكار</h3>
+                            <p class="text-xs text-blue-100 leading-relaxed">نظام فريد يدمج بين قوة المحاسبة وبساطة الأدوات الرقمية.</p>
+                        </div>
+                    </div>
+                </aside>
+
+                <main class="w-full md:w-7/12 p-8 md:p-16 bg-white flex flex-col justify-center">
+                    <header class="mb-14">
+                        <div class="inline-flex items-center gap-2 bg-[#C5A048]/10 text-[#C5A048] text-[11px] font-black px-4 py-1.5 rounded-full mb-6 border border-[#C5A048]/20">المنتج الرقمي</div>
+                        <h2 class="text-4xl md:text-5xl font-black text-[#0A194E] leading-tight">  القيمة المضافة
+(Value Proposition)</h2>
+                    </header>
+                    <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                        <div class="feature-card p-8 bg-gray-50 rounded-[2rem]">
+                            <div class="text-3xl mb-4 text-[#C5A048]">📊</div>
+                            <h4 class="font-black text-[#0A194E] mb-3 text-lg">الوضوح الفوري</h4>
+                            <p class="text-xs text-gray-500">رؤية شاملة للتدفقات النقدية بضغطة زر.</p>
+                        </div>
+                        <div class="feature-card p-8 bg-gray-50 rounded-[2rem]">
+                            <div class="text-3xl mb-4 text-[#C5A048]">🔒</div>
+                            <h4 class="font-black text-[#0A194E] mb-3 text-lg">أمان البيانات</h4>
+                            <p class="text-xs text-gray-500">بياناتك محفوظة محلياً على جهازك، لا يطلع عليها أحد سواك.</p>
+                        </div>
+                    </section>
+                    <div class="bg-[#0A194E] p-10 rounded-[2.5rem] text-center">
+                        <button class="pulse-gold gold-bg text-[#0A194E] px-14 py-5 rounded-2xl font-black text-xl">طلب نسختك الآن</button>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-dashboard" class="main-page bg-[#fcfaf7] text-[#1a1a1a]">
+        <div id="overlay" class="fixed inset-0 bg-black/60 hidden" onclick="toggleMenu()"></div>
+
+        <div id="side-menu" class="fixed top-0 right-0 h-full w-[100px] bg-white shadow-2xl flex flex-col items-center pt-24 border-l border-[#C5A048]">
+            <div class="nav-icon-link active" title="لوحة التحكم" onclick="showDashboardSection('dashboard', this)"><i data-lucide="layout-dashboard"></i></div>
+            <div class="nav-icon-link" title="القيود اليدوية" onclick="showDashboardSection('manual-entry', this)"><i data-lucide="edit-3"></i></div>
+            <div class="nav-icon-link" title="المبيعات" onclick="showDashboardSection('sales-entry', this)"><i data-lucide="shopping-cart"></i></div>
+            <div class="nav-icon-link" title="التحليل" onclick="showDashboardSection('profit-calc', this)"><i data-lucide="bar-chart-2"></i></div>
+            <div class="nav-icon-link" title="الميزانية" onclick="showDashboardSection('sovereign', this)"><i data-lucide="briefcase"></i></div>
+            <div class="mt-auto mb-10 nav-icon-link" onclick="navigateTo('page-portal')"><i data-lucide="log-out"></i></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto min-h-screen p-6 relative">
+            <header class="flex justify-between items-center mb-10">
+                <div class="menu-btn" onclick="toggleMenu()"><div></div><div></div><div></div></div>
+                <div class="text-right">
+                    <h1 class="text-2xl font-black text-[#00002A]">بوصلة هدايه</h1>
+                    <p class="text-[11px] text-[#C5A048] font-bold uppercase tracking-widest" > الوعي المالي والوضوح الرقمي</p>
+                </div>
+                <div class="w-14 h-14 dark-card flex items-center justify-center text-2xl font-black text-[#C5A048] border-2 border-[#C5A048]">H</div>
+            </header>
+
+            <div id="dashboard-content">
+                <div id="section-dashboard" class="dashboard-section space-y-4">
+                    <div class="dark-card stat-card">
+                        <p class="text-slate-400 text-xs font-bold">إجمالي الإيرادات</p>
+                        <div class="value mt-1">$<span id="display-inflow">0</span></div>
+                    </div>
+                    <div class="dark-card stat-card" style="background-color: #000035;">
+                        <p class="text-slate-400 text-xs font-bold">إجمالي النفقات</p>
+                        <div class="value mt-1" style="color: #ff6b6b;">$<span id="display-outflow">0</span></div>
+                    </div>
+                    <div class="white-card mt-6">
+                        <h3 class="font-black border-r-4 border-[#C5A048] pr-3 mb-4">القيود والتحليل المالي</h3>
+                        <div id="records-list" class="space-y-3 text-sm mb-6"></div>
+                        <div style="position: relative; height:300px; width:100%"><canvas id="financeChart"></canvas></div>
+                    </div>
+                </div>
+
+                <div id="section-profit-calc" class="dashboard-section hidden space-y-6">
+                    <div class="white-card">
+                        <h2 class="text-xl font-black mb-4 text-[#C5A048]">تحليل الربحية</h2>
+                        <div class="space-y-4">
+                            <input type="text" placeholder="اسم العميل" class="w-full p-4 bg-slate-50 rounded-2xl border" disabled>
+                            <input type="number" placeholder="التكلفة" class="w-full p-4 bg-slate-50 rounded-2xl border" disabled>
+                            <p class="text-center text-[10px] text-gray-400 uppercase font-bold">نموذج عرض فقط</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="section-sovereign" class="dashboard-section hidden space-y-6">
+                    <h2 class="text-2xl font-black mb-4 text-[#00002A]">مركز الميزانية السيادية</h2>
+                    <div class="white-card border-r-8 border-[#00002A] flex justify-between items-center"><span class="font-black">الأصول</span><span id="asset-total" class="font-black text-xl text-[#00002A]">$0</span></div>
+                    <div class="white-card border-r-8 border-[#1A3F75] flex justify-between items-center"><span class="font-black">الالتزامات</span><span id="liab-total" class="font-black text-xl text-[#1A3F75]">$0</span></div>
+                </div>
+                
+                <div id="section-manual-entry" class="dashboard-section hidden">
+                    <div class="white-card"><h2 class="font-black">القيود اليدوية</h2><p class="text-gray-400 mt-4">هذا القسم متاح في النسخة الكاملة.</p></div>
+                </div>
+                <div id="section-sales-entry" class="dashboard-section hidden">
+                    <div class="white-card"><h2 class="font-black">الحركات التجارية</h2><p class="text-gray-400 mt-4">هذا القسم متاح في النسخة الكاملة.</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // دالة التنقل الرئيسية بين الصفحات
+        function navigateTo(pageId) {
+            document.querySelectorAll('.main-page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            if(pageId === 'page-dashboard') updateUI();
+            window.scrollTo(0,0);
+        }
+
+        // دالة التنقل داخل لوحة التحكم
+        function showDashboardSection(id, el) {
+            document.querySelectorAll('.dashboard-section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('section-' + id).classList.remove('hidden');
+            document.querySelectorAll('.nav-icon-link').forEach(l => l.classList.remove('active'));
+            if(el) el.classList.add('active');
+            if(document.getElementById('side-menu').classList.contains('open')) toggleMenu();
+            updateUI();
+        }
+
+        function toggleMenu() {
+            document.getElementById('side-menu').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('hidden');
+        }
+
+        // المنطق المالي والرسم البياني
+        let myChart = null;
+        let records = JSON.parse(localStorage.getItem('hedaya_records_v3')) || [];
+
+        function initChart(data) {
+            const canvas = document.getElementById('financeChart');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['إيرادات', 'نفقات', 'أصول', 'التزامات'],
+                    datasets: [{
+                        data: [data.inflow, data.outflow, data.assets, data.liabs],
+                        backgroundColor: ['#C5A048', '#ff6b6b', '#00002A', '#1A3F75']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function updateUI() {
+            let inflow = 0, outflow = 0, assets = 0, liabs = 0;
+            
+            // قراءة السجلات وتحديث القيم
+            records.forEach(r => {
+                if(r.type === 'sale') inflow += r.amount;
+                else if(r.type === 'purchase') outflow += r.amount;
+            });
+
+            if(document.getElementById('display-inflow')) document.getElementById('display-inflow').innerText = inflow.toLocaleString();
+            if(document.getElementById('display-outflow')) document.getElementById('display-outflow').innerText = outflow.toLocaleString();
+            if(document.getElementById('asset-total')) document.getElementById('asset-total').innerText = `$${assets.toLocaleString()}`;
+            if(document.getElementById('liab-total')) document.getElementById('liab-total').innerText = `$${liabs.toLocaleString()}`;
+            
+            initChart({inflow, outflow, assets, liabs});
+        }
+
+        // تفعيل الأيقونات والبدء
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            updateUI();
+        });
+    </script>
 </body>
 </html>
-
